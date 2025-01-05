@@ -4,7 +4,6 @@ import {
 import { router } from 'expo-router'
 
 
-import Header from "../../components/header"
 import CircleButton from "../../components/CircleButton"
 import Icon from "../../components/Icon"
 
@@ -16,7 +15,6 @@ const handlePress = (): void => {
 const Create = (): JSX.Element => {
    return (
        <KeyboardAvoidingView behavior="height" style={style.container}>
-           <Header />
            <View style={style.inputContainer}>
                <TextInput multiline style={style.input} value=""/>
            </View>

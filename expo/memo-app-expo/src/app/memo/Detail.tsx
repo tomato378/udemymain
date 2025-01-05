@@ -3,7 +3,6 @@ import { View, Text, ScrollView, StyleSheet } from 'react-native'
 import { router } from 'expo-router'
 
 import Icon from '../../components/Icon'
-import Header from '../../components/header'
 import CircleButton from '../../components/CircleButton'
 
 const handlePress = (): void => {
@@ -13,7 +12,6 @@ const handlePress = (): void => {
 const Detail = (): JSX.Element => {
     return (
         <View style={styles.conainer}>
-            <Header />
             <View style={styles.memoHeader}>
                 <Text style={styles.memoTitle}>買い物リスト</Text>
                 <Text style={styles.memoDate}>2025年1月1日</Text>
