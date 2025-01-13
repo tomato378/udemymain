@@ -1,31 +1,50 @@
 import { View, Text, ScrollView, StyleSheet } from 'react-native'
-
-import { router } from 'expo-router'
+import { router, useLocalSearchParams } from 'expo-router'
+import { onSnapshot, doc } from 'firebase/firestore'
+import { useState, useEffect } from 'react'
 
 import Icon from '../../components/Icon'
 import CircleButton from '../../components/CircleButton'
+import { auth, db } from '../../config'
+import { type Memo } from '../../../types/memo'
 
-const handlePress = (): void => {
-    router.push('/memo/Edit')
+const handlePress = (id: string): void => {
+    router.push({ pathname: '/memo/Edit', params: { id} })
 }
 
 const Detail = (): JSX.Element => {
+    const id = String(useLocalSearchParams().id)
+    console.log(id)
+    const [memo, setMemo] = useState<Memo | null>(null)
+    useEffect(() => {
+        if (auth.currentUser === null) {return}
+        const ref =doc(db, `users/${auth.currentUser.uid}/memos`, id)
+        const unsubscribe = onSnapshot(ref, (memoDoc) => {
+            console.log(memoDoc.data())
+            const { bodyText, updatedAt } = memoDoc.data() as Memo
+            setMemo({
+                id: memoDoc.id,
+                bodyText,
+                updatedAt
+            })
+        })
+        return unsubscribe
+    }, [])
     return (
         <View style={styles.conainer}>
             <View style={styles.memoHeader}>
-                <Text style={styles.memoTitle}>買い物リスト</Text>
-                <Text style={styles.memoDate}>2025年1月1日</Text>
+                <Text style={styles.memoTitle} numberOfLines={1}>{memo?.bodyText}</Text>
+                <Text style={styles.memoDate}>{memo?.updatedAt?.toDate().toLocaleString()}</Text>
             </View>
             <View>
             <ScrollView style={styles.memoBody}>
                 <Text style={styles.memoBodyText}>
-                    買い物リスト
-                    テストメッセージ
+                    {memo?.bodyText}
                 </Text>
 
             </ScrollView>
             </View>
-            <CircleButton onPress={handlePress} style={{ top: 160, bottom: 'auto' }}>
+            <CircleButton onPress={() => {handlePress(id)}} style={{ top: 160, bottom: 'auto' }}>
                 <Icon name='pencil' size={40} color="#ffffff"/>
             </CircleButton>
         </View>
@@ -56,10 +75,10 @@ const styles=StyleSheet.create({
         lineHeight: 16
     },
     memoBody: {
-        paddingHorizontal: 27,
-        paddingVertical: 32
+        paddingHorizontal: 27
     },
     memoBodyText: {
+        paddingVertical: 32,
         fontSize: 16,
         lineHeight: 24,
         color: '#000000'
