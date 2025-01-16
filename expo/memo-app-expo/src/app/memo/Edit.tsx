@@ -8,11 +8,12 @@ import { doc, getDoc, setDoc, Timestamp } from "firebase/firestore"
 import KeyboardAvoidingView from '../../components/KeyboardAvoidingView'
 import CircleButton from "../../components/CircleButton"
 import Icon from "../../components/Icon"
+// import { type Memo } from "../../../types/memo"
 import { auth, db } from "../../config"
 
 const handlePress = (id: string, bodyText: string): void => {
     if (auth.currentUser === null) { return}
-    const ref = doc(db, `user/${auth.currentUser.uid}/memos`, id)
+    const ref = doc(db, `users/${auth.currentUser.uid}/memos`, id)
     setDoc(ref, {
         bodyText,
         updatedAt: Timestamp.fromDate(new Date())
@@ -32,15 +33,17 @@ const Edit = (): JSX.Element => {
     const [bodyText, setBodyText] = useState('')
     useEffect(() => {
         if (auth.currentUser === null) {return}
-        const ref = doc(db, `user/${auth.currentUser.uid}/memos`, id)
+        const ref = doc(db, `users/${auth.currentUser.uid}/memos`, id)
         getDoc(ref)
             .then((docRef) => {
                 console.log(docRef.data())
                 const RemoteBodyText = docRef?.data()?.bodyText
                 setBodyText(RemoteBodyText)
+                console.log('nanda')
             })
             .catch((error) => {
                 console.log(error)
+                console.log('なぜか')
             })
     }, [])
     console.log('edit', id)

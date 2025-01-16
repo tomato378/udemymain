@@ -1,12 +1,12 @@
 import { View, StyleSheet, FlatList } from "react-native" // 修正: FlatList をインポート
 import { router, useNavigation } from 'expo-router'
 import { useEffect, useState } from "react"
+import { collection, onSnapshot, orderBy, query } from "firebase/firestore"
 
 import MemoListItem from '../../components/MemoListItem'
 import CircleButton from "../../components/CircleButton"
 import Icon from '../../components/Icon'
 import LogOutButton from "../../components/LogOutButton"
-import { collection, onSnapshot, orderBy, query } from "firebase/firestore"
 import { db, auth } from "../../config"
 import { type Memo } from "../../../types/memo"
 
@@ -17,18 +17,11 @@ const handlePress = (): void => {
 const List = (): JSX.Element => {
     const [memos, setMemos] = useState<Memo[]>([])
     const navigation = useNavigation()
-
     useEffect(() => {
         navigation.setOptions({
             headerRight: () => { return <LogOutButton /> }
         })
     }, [])
-
-    useEffect(() => {
-        console.log("Current memos:", memos)
-    }, [memos])
-    
-
     useEffect(() => {
         if (auth.currentUser === null) { return }
         const ref = collection(db, `users/${auth.currentUser.uid}/memos`)
